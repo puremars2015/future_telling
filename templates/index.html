@@ -1,0 +1,70 @@
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Login Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-image: url("{{ url_for('static', filename='futune_telling_index_page.webp') }}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen flex flex-col items-center justify-center">
+        <div class="bg-transparent p-8 rounded-lg shadow-md w-full max-w-sm backdrop-blur-sm">
+            <!-- <div class="flex justify-center mb-10">
+                <img alt="WEB-PRO logo" class="h-8" height="50" src="https://oaidalleapiprodscus.blob.core.windows.net/private/org-KktQeCH6FkQABjKUdpS8MONV/user-TcA8EGSYjj1Pj02vQMDThx2M/img-OewCUyEZZkWhywQyRaDDaykQ.png?st=2024-04-01T12%3A25%3A20Z&amp;se=2024-04-01T14%3A25%3A20Z&amp;sp=r&amp;sv=2021-08-06&amp;sr=b&amp;rscd=inline&amp;rsct=image/png&amp;skoid=6aaadede-4fb3-4698-a8f6-684d7786b067&amp;sktid=a48cca56-e6da-484e-a814-9c849652bcb3&amp;skt=2024-04-01T01%3A35%3A09Z&amp;ske=2024-04-02T01%3A35%3A09Z&amp;sks=b&amp;skv=2021-08-06&amp;sig=GtfWX5x/WRnsd5D6Shhu2BQXyPciud8G02gbeMEutiU%3D" width="150"/>
+            </div> -->
+            <h1 class="text-2xl font-bold mb-2 text-center text-white">請登入您的帳號</h1>
+            <p class="text-gray-300 mb-8 text-center">請輸入您的使用者名稱與密碼</p>
+            <form id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-gray-300 text-sm font-bold mb-2" for="email">使用者名稱</label>
+                    <input class="shadow appearance-none bg-gray-700 bg-opacity-50 rounded w-full py-2 px-3 text-gray-300 leading-tight focus:outline-none focus:shadow-outline" id="email" type="email" value=""/>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-300 text-sm font-bold mb-2" for="password">密碼</label>
+                    <input class="shadow appearance-none bg-gray-700 bg-opacity-50 rounded w-full py-2 px-3 text-gray-300 mb-3 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" value=""/>
+                </div>
+                <div class="mb-6">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline" type="submit">Login</button>
+                </div>
+                <p class="text-center text-gray-300 text-xs"><a href="register">申請帳號</a><a href="forget">忘記密碼</a></p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        loginForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // 防止表單直接提交
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // 送出表單資料到後端
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 處理後端回應
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
