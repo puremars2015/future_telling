@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽籤問事</title>
+    <style>
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .loading-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 30%;
+            text-align: center;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>想詢問的事情</h1>
+        <p>請在下方想詢問的事項</p>
+        <div>
+            <textarea id="problemSituation" rows="10"></textarea>
+        </div> 
+    </div>
+    <div>
+        <div>
+            <h1>抽籤</h1>
+            <p>點擊下方按鈕</p>
+            <button onclick="DrawStraws()">抽籤</button>
+        </div>
+        <div>
+            <textarea id="signPoems" rows="10" readonly></textarea>
+        </div> 
+    </div>
+    <div>
+        <div>
+            <h1>解籤</h1>
+            <p>點擊下方按鈕</p>
+            <button onclick="Explain()">解籤</button>
+        </div>
+        <div>
+            <textarea id="explain" rows="10" readonly></textarea>
+        </div> 
+    </div>
+    <!-- <h1>請輸入文章內容</h1>
+    <textarea id="articleInput" rows="10"></textarea>
+    <br>
+    <button onclick="submitArticle()">提交文章</button>
+    <h2>文章大綱</h2>
+    <textarea id="outlineOutput" rows="10" readonly></textarea>
+    <h2>文章的情緒分析</h2>
+    <textarea id="sentimentOutput" rows="10" readonly></textarea>
+    <h2>情緒打分</h2>
+    <textarea id="scoreOutput" rows="5" readonly></textarea>
+    <h2>NTU情緒打分</h2>
+    <textarea id="ntuOutput" rows="5" readonly></textarea> -->
+
+    <div id="loading" class="loading">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>正在處理中，請稍候...</p>
+        </div>
+    </div>
+
+    <script>
+
+        function DrawStraws() {
+            const loadingDiv = document.getElementById("loading");
+            const signPoems = document.getElementById("signPoems");
+
+            // 顯示 loading 特效
+            loadingDiv.style.display = "block";
+
+            // 發送 AJAX 請求到後端伺服器
+            fetch('/draw_straws', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.signPoems) {
+                    signPoems.value = data.signPoems;
+                } else
+                if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('發生錯誤，請稍後再試');
+            })
+            .finally(() => {
+                // 隱藏 loading 特效
+                loadingDiv.style.display = "none";
+            });
+        }
+
+        function Explain() {
+            const loadingDiv = document.getElementById("loading");
+            const signPoems = document.getElementById("signPoems");
+            const explain = document.getElementById("explain");
+
+            // 顯示 loading 特效
+            loadingDiv.style.display = "block";
+
+            // 發送 AJAX 請求到後端伺服器
+            fetch('/explain', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    problemSituation:problemSituation.value,
+                    signPoems:signPoems.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.explain) {
+                    explain.value = data.explain;
+                } else
+                if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('發生錯誤，請稍後再試');
+            })
+            .finally(() => {
+                // 隱藏 loading 特效
+                loadingDiv.style.display = "none";
+            });
+        }
+
+        // function submitArticle() {
+        //     const articleInput = document.getElementById("articleInput");
+        //     const articleText = articleInput.value.trim();
+        //     const outlineOutput = document.getElementById("outlineOutput");
+        //     const sentimentOutput = document.getElementById("sentimentOutput");
+        //     const scoreOutput = document.getElementById("scoreOutput");
+        //     const ntuOutput = document.getElementById("ntuOutput");
+        //     const loadingDiv = document.getElementById("loading");
+
+        //     if (articleText.length === 0) {
+        //         alert("請輸入文章內容");
+        //         return;
+        //     }
+
+        //     // 顯示 loading 特效
+        //     loadingDiv.style.display = "block";
+
+        //     // 發送 AJAX 請求到後端伺服器
+        //     fetch('/submit_article', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify({ article: articleText })
+        //     })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.outline && data.sentiment && data.score) {
+        //             outlineOutput.value = data.outline;
+        //             sentimentOutput.value = data.sentiment;
+        //             scoreOutput.value = data.score;
+        //             ntuOutput.value = data.ntuscore;
+        //         } else if (data.error) {
+        //             alert(data.error);
+        //         }
+        //     })
+        //     .catch(error => {
+        //         console.error('Error:', error);
+        //         alert('發生錯誤，請稍後再試');
+        //     })
+        //     .finally(() => {
+        //         // 隱藏 loading 特效
+        //         loadingDiv.style.display = "none";
+        //     });
+        // }
+    </script>
+</body>
+</html>
