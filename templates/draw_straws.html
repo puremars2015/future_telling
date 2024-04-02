@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>抽籤問事</title>
     <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #333;
+        }
+
+        h1 {
+            color: #0077b6; /* 藍色標題 */
+        }
+
         textarea {
             width: 100%;
             height: 200px;
@@ -41,17 +50,32 @@
             background-color: #fefefe;
             margin: 15% auto;
             padding: 20px;
-            border: 1px solid #888;
+            border-radius: 10px;
             width: 30%;
             text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            animation: loading-pulse 1s infinite;
+        }
+
+        @keyframes loading-pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
             animation: spin 2s linear infinite;
         }
 
@@ -59,14 +83,52 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .loading-text {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .f-16 {
+            font-size: 16px;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1;
+            padding: 10px;
+        }
+
+        /* 對於小螢幕(手機)的樣式 */
+        @media (max-width: 768px) {
+            .col {
+                flex: 0 0 100%; /* 在小螢幕上,每個區塊佔一整行 */
+            }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        button:active {
+            animation: pulse 0.2s;
+        }
     </style>
 </head>
 <body>
-    <div>
+    <!-- <div>
         <h1>想詢問的事情</h1>
-        <p>請在下方想詢問的事項</p>
+        <p>請在下方寫上詢問的事項</p>
         <div>
-            <textarea id="problemSituation" rows="10"></textarea>
+            <textarea class="f-16" id="problemSituation"></textarea>
         </div> 
     </div>
     <div>
@@ -76,7 +138,7 @@
             <button onclick="DrawStraws()">抽籤</button>
         </div>
         <div>
-            <textarea id="signPoems" rows="10" readonly></textarea>
+            <textarea class="f-16" id="signPoems" readonly></textarea>
         </div> 
     </div>
     <div>
@@ -86,26 +148,48 @@
             <button onclick="Explain()">解籤</button>
         </div>
         <div>
-            <textarea id="explain" rows="10" readonly></textarea>
+            <textarea class="f-16" id="explain" readonly></textarea>
         </div> 
+    </div> -->
+
+    <div class="row">
+        <div class="col">
+            <!-- 問題區塊 -->
+            <h1>想詢問的事情</h1>
+            <p>請在下方寫上詢問的事項</p>
+            <div>
+                <textarea class="f-16" id="problemSituation"></textarea>
+            </div> 
+        </div>
+        <div class="col">
+            <!-- 抽籤區塊 -->
+            <div>
+                <h1>抽籤</h1>
+                <p>點擊下方按鈕</p>
+                <button onclick="DrawStraws()">抽籤</button>
+            </div>
+            <div>
+                <textarea class="f-16" id="signPoems" readonly></textarea>
+            </div> 
+        </div>
+        <div class="col">
+        <!-- 解釋區塊 -->
+            <div>
+                <h1>解籤</h1>
+                <p>點擊下方按鈕</p>
+                <button onclick="Explain()">解籤</button>
+            </div>
+            <div>
+                <textarea class="f-16" id="explain" readonly></textarea>
+            </div> 
+        </div>
     </div>
-    <!-- <h1>請輸入文章內容</h1>
-    <textarea id="articleInput" rows="10"></textarea>
-    <br>
-    <button onclick="submitArticle()">提交文章</button>
-    <h2>文章大綱</h2>
-    <textarea id="outlineOutput" rows="10" readonly></textarea>
-    <h2>文章的情緒分析</h2>
-    <textarea id="sentimentOutput" rows="10" readonly></textarea>
-    <h2>情緒打分</h2>
-    <textarea id="scoreOutput" rows="5" readonly></textarea>
-    <h2>NTU情緒打分</h2>
-    <textarea id="ntuOutput" rows="5" readonly></textarea> -->
+
 
     <div id="loading" class="loading">
         <div class="loading-content">
             <div class="loading-spinner"></div>
-            <p>正在處理中，請稍候...</p>
+            <p class="loading-text">正在處理中，請稍候...</p>
         </div>
     </div>
 
@@ -183,51 +267,6 @@
             });
         }
 
-        // function submitArticle() {
-        //     const articleInput = document.getElementById("articleInput");
-        //     const articleText = articleInput.value.trim();
-        //     const outlineOutput = document.getElementById("outlineOutput");
-        //     const sentimentOutput = document.getElementById("sentimentOutput");
-        //     const scoreOutput = document.getElementById("scoreOutput");
-        //     const ntuOutput = document.getElementById("ntuOutput");
-        //     const loadingDiv = document.getElementById("loading");
-
-        //     if (articleText.length === 0) {
-        //         alert("請輸入文章內容");
-        //         return;
-        //     }
-
-        //     // 顯示 loading 特效
-        //     loadingDiv.style.display = "block";
-
-        //     // 發送 AJAX 請求到後端伺服器
-        //     fetch('/submit_article', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({ article: articleText })
-        //     })
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.outline && data.sentiment && data.score) {
-        //             outlineOutput.value = data.outline;
-        //             sentimentOutput.value = data.sentiment;
-        //             scoreOutput.value = data.score;
-        //             ntuOutput.value = data.ntuscore;
-        //         } else if (data.error) {
-        //             alert(data.error);
-        //         }
-        //     })
-        //     .catch(error => {
-        //         console.error('Error:', error);
-        //         alert('發生錯誤，請稍後再試');
-        //     })
-        //     .finally(() => {
-        //         // 隱藏 loading 特效
-        //         loadingDiv.style.display = "none";
-        //     });
-        // }
     </script>
 </body>
 </html>
