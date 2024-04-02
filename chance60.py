@@ -1,6 +1,10 @@
 
-
-import pandas as pd
+try:
+    import pandas as pd
+except:
+    import os
+    os.system('pip install pandas')
+    import pandas as pd
 import sqlite3
 import json
 
