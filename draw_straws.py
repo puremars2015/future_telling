@@ -4,8 +4,8 @@ try:
     from flask import Flask, request, jsonify, render_template
     from openai import OpenAI
 except:
-    os.system('pip install flask')
-    os.system('pip install openai')
+    os.system('python -m pip install flask')
+    os.system('python -m pip install openai')
     from flask import Flask, request, jsonify, render_template
     from openai import OpenAI
 
