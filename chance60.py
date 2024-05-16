@@ -87,4 +87,4 @@ class Chance60Service:
         self.conn.close()
 
 
-print(GetCardById(1))
+# print(GetCardById(1))
