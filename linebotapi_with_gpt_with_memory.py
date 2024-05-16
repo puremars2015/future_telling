@@ -4,6 +4,7 @@ from openai import OpenAI
 import requests
 import json
 
+from database_helper import *
 
 app = Flask(__name__)
 
@@ -14,8 +15,8 @@ GPT = OpenAI(api_key=api_key)
 
 
 # 你的 Line Bot 的 Channel Access Token 和 Channel Secret
-CHANNEL_ACCESS_TOKEN  = '+qIW8NAe7IiO3ounSajStjlKuAvvKSJfSz7qVvkVRSUHBAahZMM+ex1jnvA1S74DVwfkp2s0VTeR5yh7e+dWZEr8K9BFfEtsy9Rj2EWJrOjsJGaL/VyvZLwBAGg2qgD+cE1mpr5CojUfSGyb0mzN4gdB04t89/1O/w1cDnyilFU='
-CHANNEL_SECRET  = '7573464c1e3506a13bc8bce074e4a873'
+CHANNEL_ACCESS_TOKEN  = 'VwfPptoEMOrLBRqi1h9vTx1j83pS0WyidSl4JIzYYBdWhN5FZEBaTBjLtkzni5qaJiuopjgpeNvZbTXjbScpiZQbpsJnfMKm5EBI0jcNUYxhAVT9A01TMVv6wMuLreIT0slSZk6KSnneupRxLS9stwdB04t89/1O/w1cDnyilFU='
+CHANNEL_SECRET  = '347ec968b8dedbb78d0f79e980d13bab'
 
 
 
@@ -49,15 +50,24 @@ def callback():
         if event['type'] == 'message' and event['message']['type'] == 'text':
             reply_token = event['replyToken']
             user_message = event['message']['text']
+            userId = event['source']['userId']
+
+            messages = load_context(userId)
+
+            if len(messages) == 0:
+                save_context(userId, 'system', '你是一個擅長聊心事的台灣人')
             
+            messages.append({"role": "user", "content": user_message})
+
+            save_context(userId, 'user', user_message)
+           
             explain_response = GPT.chat.completions.create(
                 model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "你是一個聊天的好夥伴"},
-                    {"role": "user", "content": f"{user_message}"}
-                ]
+                messages=messages
             )
             explain = explain_response.choices[0].message.content
+
+            save_context(userId, 'assistant', explain)
 
             reply_message(reply_token, f'{explain}')
     

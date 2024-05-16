@@ -59,7 +59,7 @@ def callback():
             explain_response = GPT.chat.completions.create(
                 model="gpt-4o",
                 messages=[
-                    {"role": "system", "content": "你是一個聊天的好夥伴"},
+                    {"role": "system", "content": "你是一個英文與繁體中文的語言翻譯電子字典"},
                     {"role": "user", "content": f"{user_message}"}
                 ]
             )
