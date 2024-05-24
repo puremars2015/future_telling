@@ -20,7 +20,7 @@ GPT = OpenAI(api_key=api_key)
 
 
 # 你的 Line Bot 的 Channel Access Token 和 Channel Secret
-CHANNEL_ACCESS_TOKEN  = '+qIW8NAe7IiO3ounSajStjlKuAvvKSJfSz7qVvkVRSUHBAahZMM+ex1jnvA1S74DVwfkp2s0VTeR5yh7e+dWZEr8K9BFfEtsy9Rj2EWJrOjsJGaL/VyvZLwBAGg2qgD+cE1mpr5CojUfSGyb0mzN4gdB04t89/1O/w1cDnyilFU='
+CHANNEL_ACCESS_TOKEN  = 'VwfPptoEMOrLBRqi1h9vTx1j83pS0WyidSl4JIzYYBdWhN5FZEBaTBjLtkzni5qaJiuopjgpeNvZbTXjbScpiZQbpsJnfMKm5EBI0jcNUYxhAVT9A01TMVv6wMuLreIT0slSZk6KSnneupRxLS9stwdB04t89/1O/w1cDnyilFU='
 CHANNEL_SECRET  = '7573464c1e3506a13bc8bce074e4a873'
 
 
@@ -71,4 +71,4 @@ def callback():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='localhost',debug=True,port=9527)
