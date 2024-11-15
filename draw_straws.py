@@ -1,5 +1,7 @@
 from datetime import datetime
 import os
+import subprocess
+import json
 try:
     from flask import Flask, request, jsonify, render_template
     from openai import OpenAI
@@ -24,6 +26,15 @@ GPT = OpenAI(api_key=api_key)
 @app.route('/')
 def index():
     return render_template('draw_straws.html',  error=None)
+
+@app.route('/ipismysecretandmyaddress')
+def ip():
+    # 執行命令並捕獲輸出
+    result = subprocess.run(['ipconfig'], capture_output=True, text=True)
+    # 輸出命令執行結果的標準輸出
+    print(result.stdout)
+    # text = json.dumps(result.stdout)
+    return result.stdout
 
 @app.route('/draw_straws', methods=['POST'])
 def draw_straws():
