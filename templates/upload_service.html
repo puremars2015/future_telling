@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+        .file-input {
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload a File</h1>
+        <input type="file" id="fileInput" class="file-input">
+        <button onclick="uploadFile()">Upload</button>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        function uploadFile() {
+            var fileInput = document.getElementById('fileInput');
+            var file = fileInput.files[0];
+
+            if (!file) {
+                document.getElementById('message').innerText = 'No file selected';
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append('file', file);
+
+            fetch('http://127.0.0.1:5000/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('message').innerText = 'Error: ' + data.error;
+                } else {
+                    document.getElementById('message').innerText = 'Success: ' + data.message + ', Filename: ' + data.filename;
+                }
+            })
+            .catch(error => {
+                document.getElementById('message').innerText = 'Upload failed';
+            });
+        }
+    </script>
+</body>
+</html>

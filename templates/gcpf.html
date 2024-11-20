@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抽籤問事</title>
+</head>
+<body>
+    
+
+    <div class="row">
+        <div class="col">
+            <!-- 問題區塊 -->
+            <h1>想詢問的事情</h1>
+            <p>請在下方寫上詢問的事項</p>
+            <div>
+                <textarea class="f-16" id="problemSituation"></textarea>
+            </div> 
+        </div>
+        <div class="col">
+            <!-- 抽籤區塊 -->
+            <div>
+                <h1>抽籤</h1>
+                <p>點擊下方按鈕</p>
+                <button onclick="DrawStraws()">抽籤</button>
+            </div>
+            <div>
+                <textarea class="f-16" id="signPoems" readonly></textarea>
+            </div> 
+        </div>
+        <div class="col">
+        <!-- 解釋區塊 -->
+            <div>
+                <h1>解籤</h1>
+                <p>點擊下方按鈕</p>
+                <button onclick="Explain()">解籤</button>
+            </div>
+            <div>
+                <textarea class="f-16" id="explain" readonly></textarea>
+            </div> 
+        </div>
+    </div>
+
+
+    <div id="loading" class="loading">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">正在處理中，請稍候...</p>
+        </div>
+    </div>
+
+    <script>
+
+        function DrawStraws() {
+            const loadingDiv = document.getElementById("loading");
+            const problemSituation = document.getElementById("problemSituation");
+            const signPoems = document.getElementById("signPoems");
+
+            // 顯示 loading 特效
+            loadingDiv.style.display = "block";
+
+            // 發送 AJAX 請求到後端伺服器
+            fetch('https://us-central1-smartresponse-12622.cloudfunctions.net/function-1', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    problemSituation:problemSituation.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.signPoems) {
+                    signPoems.value = data.signPoems;
+                } else
+                if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('發生錯誤，請稍後再試');
+            })
+            .finally(() => {
+                // 隱藏 loading 特效
+                loadingDiv.style.display = "none";
+            });
+        }
+
+        function Explain() {
+            const loadingDiv = document.getElementById("loading");
+            const problemSituation = document.getElementById("problemSituation");
+            const signPoems = document.getElementById("signPoems");
+            const explain = document.getElementById("explain");
+
+            // 顯示 loading 特效
+            loadingDiv.style.display = "block";
+
+            // 發送 AJAX 請求到後端伺服器
+            fetch('/explain', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    problemSituation:problemSituation.value,
+                    signPoems:signPoems.value
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.explain) {
+                    explain.value = data.explain;
+                } else
+                if (data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('發生錯誤，請稍後再試');
+            })
+            .finally(() => {
+                // 隱藏 loading 特效
+                loadingDiv.style.display = "none";
+            });
+        }
+
+    </script>
+</body>
+</html>
